@@ -23,7 +23,7 @@
     "camelcase": true,
     "quotmark": "single",
     "latedef": true,
-    "browser": true,
+    "browser": false,
     "strict": true,
     "newcap": false,
     "unused": true,

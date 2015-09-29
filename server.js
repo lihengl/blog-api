@@ -2,7 +2,6 @@
 require('babel/register')({extensions: ['.js']});
 var Promise = require('bluebird');
 
-var bodyParser = require('body-parser');
 var express = require('express');
 var logger = require('morgan');
 var mysql = require('mysql');
@@ -36,17 +35,31 @@ server.use(function (req, res, next) {
   });
 });
 
-server.use(bodyParser.json());
 server.use(middlewares);
 
 server.use(function (err, req, res, next) {
+  res.locals.connected = false;
+  req.db.release();
+
+  console.error('Endpoint: ' + req.path);
+  console.error(err.toString());
+
+  if (err.code === 'ERR_INPUT_VALIDATION') {
+    res.status(400).json({error: err.message});
+    return next();
+  }
+
+  if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+    res.status(400).json({error: 'Database constraint failure'});
+    return next();
+  }
+
   dbPool.end(function (e) {
-    console.error('Endpoint: ' + req.path);
-    console.error(err.stack);
-    if (e) { console.error('MySQL: ' + e.stack); }
+    if (e) { console.error('MySQL' + e.stack); }
     res.status(500).type('text/plain').send(err.message);
-    return next;
+    next();
   });
+
 });
 
 
