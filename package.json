@@ -1,0 +1,72 @@
+{
+  "author": "LIHENG <admin@lihengl.com>",
+  "bugs": {
+    "url": "https://github.com/lihengl/blog-api/issues"
+  },
+  "dependencies": {
+    "babel": "5.8.23",
+    "bluebird": "2.10.1",
+    "body-parser": "1.14.1",
+    "express": "4.13.3",
+    "lodash": "3.10.1",
+    "morgan": "1.6.1",
+    "mysql": "2.9.0"
+  },
+  "devDependencies": {
+    "jshint": "2.8.0",
+    "nodemon": "1.7.1",
+    "precommit-hook": "3.0.0"
+  },
+  "description": "A RESTful API server supporting CRUD for Blog",
+  "homepage": "https://github.com/lihengl/blog-api#readme",
+  "jshintConfig": {
+    "camelcase": true,
+    "quotmark": "single",
+    "latedef": true,
+    "browser": false,
+    "strict": true,
+    "newcap": false,
+    "unused": true,
+    "eqeqeq": true,
+    "mocha": true,
+    "curly": true,
+    "undef": true,
+    "node": true
+  },
+  "keywords": [
+    "blog"
+  ],
+  "license": "MIT",
+  "main": "server.js",
+  "mysqlConfig": {
+    "development": {
+      "connectionLimit": 5,
+      "host": "localhost"
+    },
+    "production": {
+      "connectionLimit": 10,
+      "host": "db.lihengl.com"
+    },
+    "staging": {
+      "connectionLimit": 5,
+      "host": "test-db.lihengl.com"
+    }
+  },
+  "name": "blog-api",
+  "pre-commit": [
+    "lint",
+    "test"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lihengl/blog-api.git"
+  },
+  "scripts": {
+    "develop": "BLUEBIRD_DEBUG=1 MYSQL_PWD=$MYSQL_PWD nodemon --watch middlewares server.js",
+    "lint": "jshint middlewares/**/*.js server.js",
+    "start": "node server.js",
+    "test": "exit 0",
+    "validate": "npm ls"
+  },
+  "version": "0.0.1"
+}
