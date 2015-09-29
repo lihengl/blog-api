@@ -7,7 +7,7 @@
 #
 # Host: localhost (MySQL 5.6.26)
 # Database: blog
-# Generation Time: 2015-09-28 15:42:19 +0000
+# Generation Time: 2015-09-29 09:03:01 +0000
 # ************************************************************
 
 
@@ -130,13 +130,14 @@ DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `alias` varchar(64) NOT NULL,
   `email` varchar(128) NOT NULL DEFAULT '',
-  `name_alias` varchar(64) NOT NULL,
   `name_first` varchar(64) NOT NULL DEFAULT '',
   `name_last` varchar(64) NOT NULL,
   `password` char(128) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `EMAIL` (`email`)
+  UNIQUE KEY `EMAIL` (`email`),
+  UNIQUE KEY `ALIAS` (`alias`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
