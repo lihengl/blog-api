@@ -39,11 +39,12 @@ var postBlog = function (req, res, next) {
   }).then(function () {
     return req.db.queryAsync(insertBlog(req.body));
   }).bind({}).then(function (result) {
-    this.id = _.get(result, '[0].insertId', false);
-    if (!this.id) { throw new Error('Unexpected insersion id'); }
+    this.id = _.get(result, '[0].insertId', 0);
+    if (this.id < 1) { throw new Error('Unexpected insersion id'); }
     return req.db.commitAsync();
   }).then(function () {
     res.status(200).json(this);
+    next();
   }).catch(function (err) {
     this.error = err;
     return req.db.rollbackAsync();
