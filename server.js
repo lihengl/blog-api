@@ -44,11 +44,6 @@ server.use(function (err, req, res, next) {
   console.error('Endpoint: ' + req.path);
   console.error(err.toString());
 
-  if (err.code === 'ERR_INPUT_VALIDATION') {
-    res.status(400).json({error: err.message});
-    return next();
-  }
-
   if (err.code === 'ER_NO_REFERENCED_ROW_2') {
     res.status(400).json({error: 'Database constraint failure'});
     return next();

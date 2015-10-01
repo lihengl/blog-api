@@ -2,6 +2,8 @@
 var Promise = require('bluebird');
 var _ = require('lodash');
 
+var ERROR_CODE = 'ERR_INPUT_VALIDATION';
+
 
 var validate = function (rule, key) {
   var input = _.get(this, this.target, false);
@@ -25,7 +27,7 @@ var filter = Promise.promisify(function (validation, target, callback) {
 
   if (this.error) {
     error = new Error(this.error);
-    error.code = 'ERR_INPUT_VALIDATION';
+    error.code = ERROR_CODE;
     return callback(error);
   }
 
@@ -34,8 +36,17 @@ var filter = Promise.promisify(function (validation, target, callback) {
 });
 
 
-module.exports = function (req, res, next) {
+exports.input = function (req, res, next) {
   req.filter = filter;
   next();
   return res;
+};
+
+exports.catch = function (err, req, res, next) {
+  if (err.code !== ERROR_CODE) { return next(err); }
+
+  console.error(err.toString());
+
+  req.db.release();
+  res.status(400).json({error: err.message});
 };
