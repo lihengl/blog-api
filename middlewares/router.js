@@ -5,21 +5,24 @@ var parser = require('body-parser').json();
 var filter = require('./filter');
 
 
-router.route('/v1/articles/:id')
+router.route('/v1/articles/:id').all(filter.apply)
   .delete(require('./article/deletes'))
   .get(require('./article/gets'))
-  .put(parser, filter, require('./article/puts'));
+  .put(parser, require('./article/puts'));
 
-router.route('/v1/articles')
+router.route('/v1/articles').all(filter.apply)
   .delete(require('./article/delete'))
   .get(require('./article/get'))
-  .post(parser, filter, require('./article/posts'));
+  .post(parser, require('./article/posts'));
 
-router.route('/v1/blogs')
-  .post(parser, filter, require('./blog/posts'));
+router.route('/v1/blogs').all(filter.apply)
+  .post(parser, require('./blog/posts'));
 
-router.route('/v1/users')
-  .post(parser, filter, require('./user/posts'));
+router.route('/v1/users').all(filter.apply)
+  .post(parser, require('./user/posts'));
+
+
+router.use(filter.catch);
 
 
 module.exports = router;

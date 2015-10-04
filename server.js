@@ -11,20 +11,24 @@ var pkg = require('./package.json');
 
 
 var dbPool = mysql.createPool(Object.assign({
-  database: 'blog',
-  password: process.env.MYSQL_PWD,
-  user: 'blog-api'
+  password: process.env.MYSQL_PWD
 }, (process.env.NODE_ENV === 'production') ?
   pkg.mysqlConfig.production :
-  (process.env.MODE === 'staging') ?
-  pkg.mysqlConfig.staging :
-  pkg.mysqlConfig.development
+  (process.env.MODE === 'development') ?
+  pkg.mysqlConfig.development :
+  (process.env.MODE === 'test') ?
+  pkg.mysqlConfig.test :
+  pkg.mysqlConfig.staging
 ));
 
 
 var server = express().disable('x-powered-by').enable('strict routing');
 
-server.use(logger('combined'));
+if (process.env.MODE === 'test') {
+  server.set('muted', true);
+} else {
+  server.use(logger('combined'));
+}
 
 server.use(function (req, res, next) {
   dbPool.getConnection(function(err, connection) {
@@ -44,11 +48,6 @@ server.use(function (err, req, res, next) {
   console.error('Endpoint: ' + req.path);
   console.error(err.toString());
 
-  if (err.code === 'ERR_INPUT_VALIDATION') {
-    res.status(400).json({error: err.message});
-    return next();
-  }
-
   if (err.code === 'ER_NO_REFERENCED_ROW_2') {
     res.status(400).json({error: 'Database constraint failure'});
     return next();
@@ -62,5 +61,8 @@ server.use(function (err, req, res, next) {
 
 });
 
-
-server.listen(4080);
+if (process.env.MODE === 'test') {
+  module.exports = server;
+} else {
+  server.listen(4080);
+}

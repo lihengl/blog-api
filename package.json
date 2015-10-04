@@ -5,34 +5,44 @@
   },
   "dependencies": {
     "babel": "5.8.23",
-    "bluebird": "2.10.1",
+    "bluebird": "2.10.2",
     "body-parser": "1.14.1",
     "express": "4.13.3",
     "lodash": "3.10.1",
     "morgan": "1.6.1",
     "mysql": "2.9.0"
   },
+  "description": "Supports CRUD operations through HTTP for blogging purposes",
   "devDependencies": {
-    "jshint": "2.8.0",
+    "chai": "3.3.0",
+    "eslint": "1.6.0",
+    "mocha": "2.3.3",
     "nodemon": "1.7.1",
-    "precommit-hook": "3.0.0"
+    "precommit-hook": "3.0.0",
+    "supertest": "1.1.0"
   },
-  "description": "A RESTful API server supporting CRUD for Blog",
+  "eslintConfig": {
+    "env": {
+      "browser": false,
+      "mocha": true,
+      "node": true
+    },
+    "rules": {
+      "curly": 2,
+      "dot-notation": 2,
+      "eqeqeq": 2,
+      "no-fallthrough": 2,
+      "no-else-return": 2,
+      "no-eq-null": 2,
+      "no-redeclare": 2,
+      "no-undef": 2,
+      "no-unused-vars": 2,
+      "quotes": [2, "single"],
+      "radix": 2,
+      "strict": [2, "global"]
+    }
+  },
   "homepage": "https://github.com/lihengl/blog-api#readme",
-  "jshintConfig": {
-    "camelcase": true,
-    "quotmark": "single",
-    "latedef": true,
-    "browser": false,
-    "strict": true,
-    "newcap": false,
-    "unused": true,
-    "eqeqeq": true,
-    "mocha": true,
-    "curly": true,
-    "undef": true,
-    "node": true
-  },
   "keywords": [
     "blog"
   ],
@@ -41,15 +51,27 @@
   "mysqlConfig": {
     "development": {
       "connectionLimit": 5,
-      "host": "localhost"
+      "database": "blog",
+      "host": "localhost",
+      "user": "blog-api-local"
     },
     "production": {
       "connectionLimit": 10,
-      "host": "db.lihengl.com"
+      "database": "blog",
+      "host": "db.lihengl.com",
+      "user": "blog-api-production"
     },
     "staging": {
       "connectionLimit": 5,
-      "host": "test-db.lihengl.com"
+      "database": "blog",
+      "host": "test-db.lihengl.com",
+      "user": "blog-api-staging"
+    },
+    "test": {
+      "connectionLimit": 5,
+      "database": "blog",
+      "host": "localhost",
+      "user": "travis"
     }
   },
   "name": "blog-api",
@@ -62,11 +84,11 @@
     "url": "git+https://github.com/lihengl/blog-api.git"
   },
   "scripts": {
-    "develop": "BLUEBIRD_DEBUG=1 MYSQL_PWD=$MYSQL_PWD nodemon --watch middlewares server.js",
-    "lint": "jshint middlewares/**/*.js server.js",
+    "develop": "BLUEBIRD_DEBUG=1 MODE=development MYSQL_PWD=$MYSQL_PWD nodemon --watch middlewares server.js",
+    "lint": "eslint server.js middlewares/* test/*",
     "start": "node server.js",
-    "test": "exit 0",
+    "test": "MODE=test _mocha",
     "validate": "npm ls"
   },
-  "version": "0.0.1"
+  "version": "0.0.2"
 }
