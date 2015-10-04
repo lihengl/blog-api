@@ -1,3 +1,3 @@
-Blog RESTful API
-====
-CRUD for articles with comments
+# Blog API
+
+Supports CRUD operations through HTTP for blogging purposes.
