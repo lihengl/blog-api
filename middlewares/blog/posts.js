@@ -3,41 +3,41 @@ var mysql = require('mysql');
 var _ = require('lodash');
 
 
-var INPUT_VALIDATION = {
+var INPUT_VALIDATION_RULE = {
   'cover': {
     format: /^[.*]{10,2048}$/,
-    required: false
+    optional: true
   },
   'name': {
     format: /^[a-zA-Z0-9\_\-]{3,16}$/,
-    required: true
+    optional: false
   },
   'tagline': {
     format: /^[a-zA-Z0-9]{1,50}$/,
-    required: false
+    optional: true
   },
   'user': {
     format: /^[0-9]$/,
-    required: true
+    optional: false
   }
 };
 
 
-var insertBlog = function (input) {
+var buildQuery = function (blog) {
   return mysql.format([
     'INSERT INTO blog (name, tagline, url_image_cover, id_user)',
     'VALUES (?, ?, ?, ?)'
   ].join(' '), [
-    input.name, input.tagline, input.cover, _.parseInt(input.user)
+    blog.name, blog.tagline, blog.cover, _.parseInt(blog.user)
   ]);
 };
 
-var postBlog = function (req, res, next) {
+var insertBlog = function (req, res, next) {
 
   req.db.beginTransactionAsync().then(function () {
-    return req.filter(INPUT_VALIDATION, 'body');
+    return req.filter(INPUT_VALIDATION_RULE, 'body');
   }).then(function () {
-    return req.db.queryAsync(insertBlog(req.body));
+    return req.db.queryAsync(buildQuery(req.body));
   }).bind({}).then(function (result) {
     this.id = _.get(result, '[0].insertId', 0);
     if (this.id < 1) { throw new Error('Unexpected insersion id'); }
@@ -54,4 +54,4 @@ var postBlog = function (req, res, next) {
 
 };
 
-module.exports = postBlog;
+module.exports = insertBlog;

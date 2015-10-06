@@ -3,35 +3,35 @@ var mysql = require('mysql');
 var _ = require('lodash');
 
 
-var INPUT_VALIDATION = {
+var INPUT_VALIDATION_RULE = {
   'alias': {
     format: /^[a-zA-Z\-]{1,20}$/,
-    required: true
+    optional: false
   },
   'email': {
     format: /^[A-Za-z0-9._+\-\']+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/,
-    required: true
+    optional: false
   },
   'forename': {
     format: /^[a-zA-Z\-]{1,50}$/,
-    required: true
+    optional: false
   },
   'surname': {
     format: /^[a-zA-Z]{1,7}$/,
-    required: true
+    optional: false
   },
   'password': {
     format: /^[a-zA-Z0-9]{8,50}$/,
-    required: true
+    optional: false
   }
 };
 
 
-var insertUser = function (input) {
+var buildQuery = function (user) {
   var salt = (Math.random() + 1).toString(36).slice(2, 6);
   var hmac = require('crypto').createHmac('md5', salt);
 
-  input.password = salt + hmac.update(input.password).digest('hex');
+  user.password = salt + hmac.update(user.password).digest('hex');
 
   return mysql.format([
     'INSERT INTO user (alias, email, password, name_first, name_last)',
@@ -39,16 +39,16 @@ var insertUser = function (input) {
   ].join(' '), [
     'alias', 'email', 'password', 'forename', 'surname'
   ].map(function (field) {
-    return input[field];
+    return user[field];
   }));
 };
 
-var postUser = function (req, res, next) {
+var insertUser = function (req, res, next) {
 
   req.db.beginTransactionAsync().then(function () {
-    return req.filter(INPUT_VALIDATION, 'body');
+    return req.filter(INPUT_VALIDATION_RULE, 'body');
   }).then(function () {
-    return req.db.queryAsync(insertUser(req.body));
+    return req.db.queryAsync(buildQuery(req.body));
   }).bind({}).then(function (result) {
     this.id = _.get(result, '[0].insertId', 0);
     if (this.id < 1) { throw new Error('Unexpected insersion id'); }
@@ -66,4 +66,4 @@ var postUser = function (req, res, next) {
 
 };
 
-module.exports = postUser;
+module.exports = insertUser;
