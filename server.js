@@ -1,12 +1,11 @@
 'use strict';
-require('babel/register')({extensions: ['.js']});
 var Promise = require('bluebird');
 
 var express = require('express');
 var logger = require('morgan');
 var mysql = require('mysql');
 
-var middlewares = require('./middlewares/router');
+var endpoints = require('./endpoints/router');
 var pkg = require('./package.json');
 
 
@@ -39,7 +38,7 @@ server.use(function (req, res, next) {
   });
 });
 
-server.use(middlewares);
+server.use(endpoints);
 
 server.use(function (err, req, res, next) {
   res.locals.connected = false;

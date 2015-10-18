@@ -3,7 +3,7 @@ var Promise = require('bluebird');
 var _ = require('lodash');
 
 
-var ERROR_CODE = 'ERR_INPUT_VALIDATION';
+var ERROR_CODE = 'ERR_INVALID_INPUT';
 
 
 var findError = function (rule, key) {
@@ -14,7 +14,7 @@ var findError = function (rule, key) {
     this.error = new Error('Object req.' + this.target + ' does not exist');
   } else if (_.has(input, key) && !rule.format.test(input[key])) {
     this.error = new Error('Bad ' + this.target + '.' + key + ': ' + input[key]);
-  } else if (!_.has(input, key) && rule.required) {
+  } else if (!_.has(input, key) && !rule.optional) {
     this.error = new Error('Missing ' + this.target + '.' + key);
   } else {
     clear = true;

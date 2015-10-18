@@ -4,7 +4,6 @@
     "url": "https://github.com/lihengl/blog-api/issues"
   },
   "dependencies": {
-    "babel": "5.8.23",
     "bluebird": "2.10.2",
     "body-parser": "1.14.1",
     "express": "4.13.3",
@@ -15,7 +14,8 @@
   "description": "Supports CRUD operations through HTTP for blogging purposes",
   "devDependencies": {
     "chai": "3.3.0",
-    "eslint": "1.6.0",
+    "eslint": "1.7.1",
+    "istanbul": "0.4.0",
     "mocha": "2.3.3",
     "nodemon": "1.7.1",
     "precommit-hook": "3.0.0",
@@ -31,6 +31,7 @@
       "curly": 2,
       "dot-notation": 2,
       "eqeqeq": 2,
+      "indent": [2, 2, {"SwitchCase": 0}],
       "no-fallthrough": 2,
       "no-else-return": 2,
       "no-eq-null": 2,
@@ -39,6 +40,7 @@
       "no-unused-vars": 2,
       "quotes": [2, "single"],
       "radix": 2,
+      "semi": [2, "always"],
       "strict": [2, "global"]
     }
   },
@@ -77,7 +79,9 @@
   "name": "blog-api",
   "pre-commit": [
     "lint",
-    "test"
+    "reset",
+    "test",
+    "reset"
   ],
   "repository": {
     "type": "git",
@@ -85,10 +89,12 @@
   },
   "scripts": {
     "develop": "BLUEBIRD_DEBUG=1 MODE=development MYSQL_PWD=$MYSQL_PWD nodemon --watch middlewares server.js",
+    "create": "echo 'create database blog' | mysql -u root --password=''",
     "lint": "eslint server.js middlewares/* test/*",
+    "reset": "mysql -u root --password='' blog < schema.sql",
     "start": "node server.js",
-    "test": "MODE=test _mocha",
+    "test": "MODE=test istanbul cover _mocha -- --reporter dot",
     "validate": "npm ls"
   },
-  "version": "0.0.2"
+  "version": "0.0.3"
 }
