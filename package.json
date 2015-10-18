@@ -4,6 +4,7 @@
     "url": "https://github.com/lihengl/blog-api/issues"
   },
   "dependencies": {
+    "babel": "5.8.23",
     "bluebird": "2.10.2",
     "body-parser": "1.14.1",
     "express": "4.13.3",
@@ -11,9 +12,10 @@
     "morgan": "1.6.1",
     "mysql": "2.9.0"
   },
-  "description": "Supports CRUD operations through HTTP for blogging purposes",
+  "description": "Support CRUD operations on Blog through HTTP",
   "devDependencies": {
     "chai": "3.3.0",
+    "coveralls": "2.11.4",
     "eslint": "1.7.1",
     "istanbul": "0.4.0",
     "mocha": "2.3.3",
