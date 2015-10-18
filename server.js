@@ -1,4 +1,5 @@
 'use strict';
+require('babel/register')({extensions: ['.js']});
 var Promise = require('bluebird');
 
 var express = require('express');
