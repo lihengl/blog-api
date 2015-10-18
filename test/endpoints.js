@@ -12,7 +12,7 @@ describe('POST /v1/users', function () {
     forename: 'Foo',
     password: '123',
     surname: 'Bar',
-  }
+  };
 
   it('should error out when missing required input field', function (done) {
     supertest(server).post('/v1/users').send(_.omit(user, 'alias'))
