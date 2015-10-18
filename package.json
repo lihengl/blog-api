@@ -98,5 +98,5 @@
     "test": "MODE=test istanbul cover _mocha -- --reporter dot",
     "validate": "npm ls"
   },
-  "version": "0.0.3"
+  "version": "0.0.4"
 }
