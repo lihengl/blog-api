@@ -30,7 +30,6 @@ server.use(function (req, res, next) {
   dbPool.getConnection(function(err, connection) {
     if (err) { return next(err); }
     req.db = Promise.promisifyAll(connection);
-    res.locals.connected = true;
     next();
   });
 });
