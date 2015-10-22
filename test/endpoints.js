@@ -30,4 +30,10 @@ describe('POST /v1/users', function () {
     .expect(200, {id: 1}, done);
   });
 
+  it('should respond with created user id with valid input', function (done) {
+    user.password = '1qaz2wsx';
+    supertest(server).post('/v1/users').send(user)
+    .expect(403, {error: 'Email: ' + user.email + ' already existed'}, done);
+  });
+
 });

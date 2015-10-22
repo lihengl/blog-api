@@ -24,11 +24,7 @@ var dbPool = mysql.createPool(Object.assign({
 
 var server = express().disable('x-powered-by').enable('strict routing');
 
-if (process.env.MODE === 'test') {
-  server.set('muted', true);
-} else {
-  server.use(logger('combined'));
-}
+server.use(logger('combined'));
 
 server.use(function (req, res, next) {
   dbPool.getConnection(function(err, connection) {
@@ -42,9 +38,6 @@ server.use(function (req, res, next) {
 server.use(endpoints);
 
 server.use(function (err, req, res, next) {
-  res.locals.connected = false;
-  req.db.release();
-
   console.error('Endpoint: ' + req.path);
   console.error(err.toString());
 

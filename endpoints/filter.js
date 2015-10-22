@@ -43,11 +43,5 @@ exports.apply = function (req, res, next) {
 
 exports.catch = function (err, req, res, next) {
   if (err.code !== ERROR_CODE) { return next(err); }
-
-  if (!req.app.get('muted')) {
-    console.error(err.toString());
-  }
-
-  req.db.release();
-  res.status(400).json({error: err.message});
+  return res.status(400).json({error: err.message});
 };

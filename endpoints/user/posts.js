@@ -27,6 +27,13 @@ var INPUT_VALIDATION_RULE = {
 };
 
 
+var formatDuplicate = function (rawErrorMessage) {
+  var messageChunks = rawErrorMessage.split('\'');
+  var dupField = _.capitalize(messageChunks[3].toLowerCase());
+  var dupValue = messageChunks[1];
+  return {error: dupField + ': ' + dupValue + ' already existed'};
+};
+
 var buildQuery = function (user) {
   var salt = (Math.random() + 1).toString(36).slice(2, 6);
   var hmac = require('crypto').createHmac('md5', salt);
@@ -45,22 +52,25 @@ var buildQuery = function (user) {
 
 var insertUser = function (req, res, next) {
 
-  req.db.beginTransactionAsync().then(function () {
+  req.db.beginTransactionAsync().bind({}).then(function () {
     return req.filter(INPUT_VALIDATION_RULE, 'body');
   }).then(function () {
     return req.db.queryAsync(buildQuery(req.body));
-  }).bind({}).then(function (result) {
+  }).then(function (result) {
     this.id = _.get(result, '[0].insertId', 0);
-    if (this.id < 1) { throw new Error('Unexpected insersion id'); }
     return req.db.commitAsync();
-  }).then(function () {
-    req.db.release();
-    res.status(200).json(this);
-    next();
   }).catch(function (err) {
     this.error = err;
     return req.db.rollbackAsync();
   }).then(function () {
+    req.db.release();
+
+    if (!_.has(this, 'error')) { return res.status(200).json(this); }
+    if (this.error.code === 'ER_DUP_ENTRY') {
+      res.status(403).json(formatDuplicate(this.error.message));
+      return;
+    }
+
     next(this.error);
   });
 
