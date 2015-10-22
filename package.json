@@ -14,12 +14,12 @@
   },
   "description": "Support CRUD operations on Blog through HTTP",
   "devDependencies": {
-    "chai": "3.3.0",
+    "chai": "3.4.0",
     "coveralls": "2.11.4",
-    "eslint": "1.7.1",
+    "eslint": "1.7.3",
     "istanbul": "0.4.0",
     "mocha": "2.3.3",
-    "nodemon": "1.7.1",
+    "nodemon": "1.7.3",
     "precommit-hook": "3.0.0",
     "supertest": "1.1.0"
   },
