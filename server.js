@@ -6,7 +6,7 @@ var express = require('express');
 var logger = require('morgan');
 var mysql = require('mysql');
 
-var endpoints = require('./endpoints/router');
+var handlers = require('./handlers/router');
 var pkg = require('./package.json');
 
 
@@ -34,7 +34,7 @@ server.use(function (req, res, next) {
   });
 });
 
-server.use(endpoints);
+server.use(handlers);
 
 server.use(function (err, req, res, next) {
   console.error('Endpoint: ' + req.path);
